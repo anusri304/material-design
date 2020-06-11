@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -53,6 +54,9 @@ public class ArticleListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_article_list);
 
         mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        // Set toolbar as the Appbar
+
+        setSupportActionBar(mToolbar);
 
        // ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout)).setTitle(getResources().getString(R.string.app_name));
 
