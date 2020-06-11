@@ -25,6 +25,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+   <!-- TODO: apply toolba themes -->
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <!-- android:textColorPrimary is the color of the title text in the Toolbar  -->
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
