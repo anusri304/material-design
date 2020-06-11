@@ -24,6 +24,7 @@
             android:id="@+id/app_bar_layout"
             android:background="?colorAccent"
             android:layout_width="match_parent"
+            android:elevation="4dp"
             android:layout_height="100dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
