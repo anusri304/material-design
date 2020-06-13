@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.*;
 import android.database.Cursor;
@@ -170,12 +171,15 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
+            //DynamicHeightNetworkImageView imageView = (DynamicHeightNetworkImageView) findViewById(R.id.thumbnail);
             final ViewHolder vh = new ViewHolder(view);
+
+            final Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this,vh.thumbnailView,vh.thumbnailView.getTransitionName()).toBundle();
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
+                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))),bundle);
                 }
             });
             return vh;

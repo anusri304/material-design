@@ -246,7 +246,6 @@ public class ArticleDetailFragment extends Fragment implements
                                         mCursor.getString(ArticleLoader.Query.THUMB_URL),
                                         ImageLoaderHelper.getInstance(getActivity()).getImageLoader());
                                 mPhotoView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-                                Log.d("anandhi","Anandhi"+imageContainer.getBitmap().toString());
 //                                mRootView.findViewById(R.id.meta_bar)
 //                                        .setBackgroundColor(mMutedColor);
                                 updateStatusBar();
