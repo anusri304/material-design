@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.xyzreader"
+          xmlns:tools="http://schemas.android.com/tools" package="com.example.xyzreader"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -30,8 +30,8 @@
         <activity
             android:name=".ui.ArticleDetailActivity"
             android:parentActivityName=".ui.ArticleListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+            <intent-filter android:scheme="http">
+                <action android:name="android.intent.action.VIEW" tools:ignore="AppLinkUrlError"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="vnd.android.cursor.item/vnd.com.example.xyzreader.items" />
             </intent-filter>
