@@ -51,7 +51,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_article_list);
+        setContentView(R.layout.activity_article);
 
         mToolbar = (Toolbar) findViewById(R.id.app_bar);
         // Set toolbar as the Appbar
