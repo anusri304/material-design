@@ -1,6 +1,5 @@
 package com.example.xyzreader.ui;
 
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.*;
 import android.database.Cursor;
@@ -8,12 +7,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.transition.ChangeBounds;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -57,7 +53,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     // Use default locale format
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
-    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +94,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             if (savedInstanceState == null) {
                 refresh();
             }
-        }
-        else {
+        } else {
             showMessage(NO_INTERNET_MESSAGE);
         }
 
@@ -144,7 +139,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     };
 
     private void updateRefreshingUI() {
-     //   mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
+        //   mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
     @Override
@@ -186,7 +181,6 @@ public class ArticleListActivity extends AppCompatActivity implements
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
 
-            final Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this,vh.thumbnailView,vh.thumbnailView.getTransitionName()).toBundle();
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -225,8 +219,8 @@ public class ArticleListActivity extends AppCompatActivity implements
             } else {
                 holder.subtitleView.setText(Html.fromHtml(
                         outputFormat.format(publishedDate)
-                        + "<br/>" + " by "
-                        + mCursor.getString(ArticleLoader.Query.AUTHOR)));
+                                + "<br/>" + " by "
+                                + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
@@ -234,7 +228,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
 
             Glide.with(ArticleListActivity.this)
-                    .load( mCursor.getString(ArticleLoader.Query.THUMB_URL)                          )
+                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .into(holder.thumbnailView);
         }
 
@@ -255,20 +249,5 @@ public class ArticleListActivity extends AppCompatActivity implements
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }
-    }
-
-    private Transition enterTransition() {
-        ChangeBounds bounds = new ChangeBounds();
-        bounds.setDuration(2000);
-
-        return bounds;
-    }
-
-    private Transition returnTransition() {
-        ChangeBounds bounds = new ChangeBounds();
-        bounds.setInterpolator(new DecelerateInterpolator());
-        bounds.setDuration(2000);
-
-        return bounds;
     }
 }
