@@ -4,30 +4,39 @@ import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.*;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.bumptech.glide.Glide;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
+import com.example.xyzreader.utils.NetworkUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import static com.example.xyzreader.utils.ApplicationConstants.NO_INTERNET_MESSAGE;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -42,6 +51,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    CoordinatorLayout coordinatorLayout;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -54,52 +64,55 @@ public class ArticleListActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
 
-        mToolbar = (Toolbar) findViewById(R.id.app_bar);
-        // Set toolbar as the Appbar
 
-        setSupportActionBar(mToolbar);
+        if (NetworkUtils.isNetworkConnected(this)) {
+            mToolbar = (Toolbar) findViewById(R.id.app_bar);
+            // Set toolbar as the Appbar
 
-       // ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout)).setTitle(getResources().getString(R.string.app_name));
+            setSupportActionBar(mToolbar);
 
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
 
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
+            final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+            AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                boolean isShow = true;
+                int scrollRange = -1;
+
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout.getTotalScrollRange();
+                    }
+                    if (scrollRange + verticalOffset == 0) {
+                        collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
+                        isShow = true;
+                    } else if (isShow) {
+                        collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
+                        isShow = false;
+                    }
                 }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
-                    isShow = true;
-                } else if(isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
-                    isShow = false;
-                }
+            });
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            getLoaderManager().initLoader(0, null, this);
+
+            if (savedInstanceState == null) {
+                refresh();
             }
-        });
-
-//        setSupportActionBar(mToolbar);
-//
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        getSupportActionBar().setLogo(R.drawable.logo);
-//        getSupportActionBar().setDisplayUseLogoEnabled(true);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-     //   setSupportActionBar(mToolbar);
-
-       // mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        getLoaderManager().initLoader(0, null, this);
-
-        if (savedInstanceState == null) {
-            refresh();
         }
+        else {
+            showMessage(NO_INTERNET_MESSAGE);
+        }
+
     }
+
+    private void showMessage(String message) {
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinator_layout);
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, message, Snackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(Color.RED);
+        snackbar.show();
+    }
+
 
     private void refresh() {
         startService(new Intent(this, UpdaterService.class));
@@ -171,7 +184,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            //DynamicHeightNetworkImageView imageView = (DynamicHeightNetworkImageView) findViewById(R.id.thumbnail);
             final ViewHolder vh = new ViewHolder(view);
 
             final Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this,vh.thumbnailView,vh.thumbnailView.getTransitionName()).toBundle();
@@ -179,7 +191,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
                     startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))),bundle);
+                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
                 }
             });
             return vh;
@@ -220,11 +232,14 @@ public class ArticleListActivity extends AppCompatActivity implements
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+
+            Glide.with(ArticleListActivity.this)
+                    .load( mCursor.getString(ArticleLoader.Query.THUMB_URL)                          )
+                    .into(holder.thumbnailView);
         }
 
         @Override
         public int getItemCount() {
-            Log.i(TAG, "getItemCount" +mCursor.getCount() );
             return mCursor.getCount();
         }
     }
@@ -240,5 +255,20 @@ public class ArticleListActivity extends AppCompatActivity implements
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }
+    }
+
+    private Transition enterTransition() {
+        ChangeBounds bounds = new ChangeBounds();
+        bounds.setDuration(2000);
+
+        return bounds;
+    }
+
+    private Transition returnTransition() {
+        ChangeBounds bounds = new ChangeBounds();
+        bounds.setInterpolator(new DecelerateInterpolator());
+        bounds.setDuration(2000);
+
+        return bounds;
     }
 }

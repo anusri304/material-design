@@ -8,17 +8,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import android.os.Bundle;
-import androidx.core.app.ShareCompat;
-import androidx.palette.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -26,13 +17,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
+import androidx.core.app.ShareCompat;
+import androidx.palette.graphics.Palette;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -205,9 +202,6 @@ public class ArticleDetailFragment extends Fragment implements
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
-
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
-
         if (mCursor != null) {
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
@@ -241,13 +235,14 @@ public class ArticleDetailFragment extends Fragment implements
                             if (bitmap != null) {
                                 Palette p = Palette.generate(bitmap, 12);
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
-                             //   mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mPhotoView.setImageUrl(
                                         mCursor.getString(ArticleLoader.Query.THUMB_URL),
                                         ImageLoaderHelper.getInstance(getActivity()).getImageLoader());
                                 mPhotoView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-//                                mRootView.findViewById(R.id.meta_bar)
-//                                        .setBackgroundColor(mMutedColor);
+
+                                Glide.with(getActivity())
+                                        .load( mCursor.getString(ArticleLoader.Query.THUMB_URL)                          )
+                                        .into(mPhotoView);
                                 updateStatusBar();
                             }
                         }
