@@ -62,6 +62,8 @@ public class ArticleListActivity extends AppCompatActivity implements
 
 
         if (NetworkUtils.isNetworkConnected(this)) {
+
+            mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
             mToolbar = (Toolbar) findViewById(R.id.app_bar);
             // Set toolbar as the Appbar
 
@@ -139,7 +141,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     };
 
     private void updateRefreshingUI() {
-        //   mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
+        mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
     @Override
