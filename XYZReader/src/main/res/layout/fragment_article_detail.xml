@@ -74,7 +74,7 @@
                     android:layout_marginTop="@dimen/detail_card_top_margin">
                 <TextView
                         android:id="@+id/article_body"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif-condensed-medium"
                         style="?android:attr/textAppearanceMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
